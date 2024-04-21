@@ -1,6 +1,6 @@
 import api from 'steam-js-api';
 
-export default function UserRoutes(app) {
+export default function SteamRoutes(app) {
     api.setKey(process.env.STEAM_API_KEY);
 
     const getOwnedGames = async (req, res) => {

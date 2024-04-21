@@ -4,7 +4,7 @@ import session from "express-session";
 import cors from "cors";
 import "dotenv/config";
 import UserRoutes from "./Users/routes.js";
-const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || 'mongodb://127.0.0.1:27017/users'
+const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || 'mongodb://127.0.0.1:27017/gamelibrary'
 mongoose.connect(CONNECTION_STRING);
 const app = express();
 app.use(cors({

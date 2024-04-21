@@ -1,22 +1,48 @@
-import { api } from 'steam-js-api';
+import api from 'steam-js-api';
 
-api.setKey(process.env.STEAM_API_KEY);
-const steamID = "76561198050649379";
-var appID = null;
-const moreInfo = true;
+export default function SteamRoutes(app) {
+    api.setKey(process.env.STEAM_API_KEY);
 
-// get games for a user
-api.getOwnedGames(steamID, appID, moreInfo).then(result => {
-    console.log(result.data.games)
-}).catch(console.error)
+    const getOwnedGames = async (req, res) => {
+        const steamID = req.params.steamID;
+        const appID = req.params.appID || null;
+        const moreInfo = true;
 
-// game schema returns a list of all achievements and icons for a game,
-// need to match them with getAchievements from the player
-appID = 221910;
-api.getGameSchema(appID).then(result => {
-    console.log(result.data)
-}).catch(console.error)
+        try {
+            const result = await api.getOwnedGames(steamID, appID, moreInfo);
+            res.json(result.data.games);
+        } catch (err) {
+            console.error(err);
+            res.status(400).send('An error occurred while fetching data from the Steam API.');
+        }
+    };
 
-api.getAchievements(steamID, appID).then(result => {
-    console.log(result.data)
-}).catch(console.error)
+    const getGameSchema = async (req, res) => {
+        const appID = req.params.appID;
+
+        try {
+            const result = await api.getGameSchema(appID);
+            res.json(result.data);
+        } catch (err) {
+            console.error(err);
+            res.status(400).send('An error occurred while fetching data from the Steam API.');
+        }
+    };
+
+    const getAchievements = async (req, res) => {
+        const steamID = req.params.steamID;
+        const appID = req.params.appID;
+
+        try {
+            const result = await api.getAchievements(steamID, appID);
+            res.json(result.data);
+        } catch (err) {
+            console.error(err);
+            res.status(400).send('An error occurred while fetching data from the Steam API.');
+        }
+    };
+
+    app.get('/api/games/:steamID/:appID?', getOwnedGames);
+    app.get('/api/schema/:appID', getGameSchema);
+    app.get('/api/achievements/:steamID/:appID', getAchievements);
+}

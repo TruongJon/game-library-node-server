@@ -10,5 +10,5 @@ const userSchema = new mongoose.Schema({
     following: [ { "username" : String } ],
     likes: [ { "game" : String } ]
   },
-  { collection: "users" });
+  { collection: "users", versionKey: false  });
 export default userSchema;

@@ -4,9 +4,11 @@ export default function UserRoutes(app) {
     const user = await dao.createUser(req.body);
     res.json(user);
   };
-  const findUserById = async (req, res) => {
-    const user = await dao.findUserById(req.params.userId);
-    res.json(user);
+  const findUserByUsername = async (req, res) => {
+    const user = await dao.findUserByUsername(req.params.username);
+    const userCopy = JSON.parse(JSON.stringify(user));
+    delete userCopy.password;
+    res.json(userCopy);
   };
   const profile = async (req, res) => {
     const currentUser = req.session["currentUser"];
@@ -17,10 +19,10 @@ export default function UserRoutes(app) {
     res.json(currentUser);
   };
   const signup = async (req, res) => {
+    console.log(req.body.username);
     const user = await dao.findUserByUsername(req.body.username);
     if (user) {
-      res.status(400).json(
-        { message: "Username already taken" });
+      res.status(400).json({ message: "Username already taken" });
     }
     const currentUser = await dao.createUser(req.body);
     req.session["currentUser"] = currentUser;
@@ -52,7 +54,7 @@ export default function UserRoutes(app) {
     res.json(status);
   };
   app.post("/api/users", createUser);
-  app.get("/api/users/:userId", findUserById);
+  app.get("/api/users/:username", findUserByUsername);
   app.post("/api/users/profile", profile);
   app.post("/api/users/signup", signup);
   app.post("/api/users/signin", signin);

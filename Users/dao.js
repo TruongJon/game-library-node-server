@@ -1,7 +1,14 @@
 import model from "./model.js";
 export const createUser = (user) => {
     delete user._id
-    return model.create(user);
+    const defaultUser = {
+      bio: `${user.username} has not set a bio yet.`,
+      riotid: "",
+      steamid: "",
+      following: [],
+      likes: [],
+    };
+    return model.create({...defaultUser, ...user});
 }
 export const findUserById = (userId) => model.findById(userId);
 export const findUserByUsername = (username) =>  model.findOne({ username: username });

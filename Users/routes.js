@@ -5,6 +5,18 @@ export default function UserRoutes(app) {
     res.json(user);
   };
   
+  const updateUser = async (req, res) => {
+    const status = await dao.updateUser(req.params.username, req.body);
+    const currentUser = await dao.findUserByUsername(req.params.username);
+    req.session["currentUser"] = currentUser;
+    res.json(status);
+  };
+
+  const deleteUser = async (req, res) => {
+    const status = await dao.deleteUser(req.params.username);
+    res.json(status);
+  };
+
   const findUserByUsername = async (req, res) => {
     const user = await dao.findUserByUsername(req.params.username);
     const userCopy = JSON.parse(JSON.stringify(user));
@@ -28,7 +40,8 @@ export default function UserRoutes(app) {
   };
 
   const findFollowing = async (req, res) => {
-    const following = (await dao.findUserByUsername(req.params.username)).following;
+    const currentUser = await dao.findUserByUsername(req.params.username);
+    const following = currentUser.following;
     const followingList = await following.map(async (person) => {
       const avatar = (await dao.findUserByUsername(person)).avatar;
       return { username: person, avatar: avatar };
@@ -43,8 +56,6 @@ export default function UserRoutes(app) {
       ...user._doc,
       following: [...user.following, followingUsername],
     });
-    const currentUser = await dao.findUserById(user._id);
-    req.session["currentUser"] = currentUser;
     res.send(status);
   };
 
@@ -83,28 +94,15 @@ export default function UserRoutes(app) {
     res.sendStatus(200);
   };
 
-  const updateUser = async (req, res) => {
-    const { userId } = req.params;
-    const status = await dao.updateUser(userId, req.body);
-    const currentUser = await dao.findUserById(userId);
-    req.session["currentUser"] = currentUser;
-    res.json(status);
-  };
-
-  const deleteUser = async (req, res) => {
-    const status = await dao.deleteUser(req.params.userId);
-    res.json(status);
-  };
-
   app.post("/api/users", createUser);
+  app.put("/api/users/:username", updateUser);
+  app.delete("/api/users/:username", deleteUser);
   app.get("/api/users/:username", findUserByUsername);
+  app.get("/api/users/search/:username/:searchString", searchUsername);
   app.get("/api/users/:username/following", findFollowing);
+  app.put("/api/users/:username/:followingUsername", followUser);
   app.post("/api/users/profile", profile);
   app.post("/api/users/signup", signup);
   app.post("/api/users/signin", signin);
   app.post("/api/users/signout", signout);
-  app.put("/api/users/:userId", updateUser);
-  app.delete("/api/users/:userId", deleteUser);
-  app.get("/api/users/search/:username/:searchString", searchUsername);
-  app.put("/api/users/:username/:followingUsername", followUser);
 }

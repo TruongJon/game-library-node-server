@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     bio: String,
     riotid: String,
     steamid: String,
-    following: [ { "username" : String } ],
+    following: [ String ],
     likes: [ { "game" : String } ]
   },
   { collection: "users", versionKey: false  });

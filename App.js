@@ -6,6 +6,7 @@ import cors from "cors";
 import UserRoutes from "./Users/routes.js";
 import SteamRoutes from "./Clients/steam.js";
 import RiotRoutes from "./Clients/riot.js";
+import GameRoutes from "./Games/routes.js";
 
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || 'mongodb://127.0.0.1:27017/gamelibrary'
 mongoose.connect(CONNECTION_STRING);
@@ -32,5 +33,6 @@ app.use(express.json());
 UserRoutes(app);
 SteamRoutes(app);
 RiotRoutes(app);
+GameRoutes(app);
 
 app.listen(process.env.PORT || 4000);

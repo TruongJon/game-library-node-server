@@ -4,7 +4,7 @@ export default function UserRoutes(app) {
     const user = await dao.createUser(req.body);
     res.json(user);
   };
-  
+
   const updateUser = async (req, res) => {
     const status = await dao.updateUser(req.params.username, req.body);
     const currentUser = await dao.findUserByUsername(req.params.username);
@@ -31,14 +31,12 @@ export default function UserRoutes(app) {
 
   const searchUsername = async (req, res) => {
     const currentUser = await dao.findUserByUsername(req.params.username);
-    const user = await dao.searchUsername(
-      req.params.searchString,
-      [...currentUser.following, currentUser.username]
-    );
+    const user = await dao.searchUsername(req.params.searchString, [
+      ...currentUser.following,
+      currentUser.username,
+    ]);
     const userList = await user.map(async (person) => {
-      const avatar = (
-        await dao.findUserByUsername(person.username)
-      ).avatar;
+      const avatar = (await dao.findUserByUsername(person.username)).avatar;
       return { username: person.username, avatar: avatar };
     });
     res.json(await Promise.all(userList));
@@ -57,10 +55,24 @@ export default function UserRoutes(app) {
   const followUser = async (req, res) => {
     const { username, followingUsername } = req.params;
     const user = await dao.findUserByUsername(username);
-    const status = await dao.updateUser(user._id, {
+    const status = await dao.updateUser(user.username, {
       ...user._doc,
       following: [...user.following, followingUsername],
     });
+    req.session["currentUser"] = await dao.findUserByUsername(username);
+    res.send(status);
+  };
+
+  const unfollowUser = async (req, res) => {
+    const { username, followingUsername } = req.params;
+    const user = await dao.findUserByUsername(username);
+    const status = await dao.updateUser(user.username, {
+      ...user._doc,
+      following: user.following.filter(
+        (follow) => follow !== followingUsername
+      ),
+    });
+    req.session["currentUser"] = await dao.findUserByUsername(username);
     res.send(status);
   };
 
@@ -106,7 +118,8 @@ export default function UserRoutes(app) {
   app.get("/api/users/:username", findUserByUsername);
   app.get("/api/users/search/:username/:searchString", searchUsername);
   app.get("/api/users/:username/following", findFollowing);
-  app.put("/api/users/:username/:followingUsername", followUser);
+  app.put("/api/users/:username/follow/:followingUsername", followUser);
+  app.put("/api/users/:username/unfollow/:followingUsername", unfollowUser);
   app.post("/api/users/profile", profile);
   app.post("/api/users/signup", signup);
   app.post("/api/users/signin", signin);

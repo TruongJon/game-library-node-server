@@ -10,6 +10,7 @@ export const createUser = (user) => {
     };
     return model.create({...defaultUser, ...user});
 }
+export const findAllUsers = () => model.find();
 export const findUserByUsername = (username) =>  model.findOne({ username: username });
 export const findUserByCredentials = (username, password) =>  model.findOne({ username, password });
 export const updateUser = (username, user) =>  model.updateOne({ username: username }, { $set: user });

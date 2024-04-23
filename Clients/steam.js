@@ -5,14 +5,14 @@ export default function SteamRoutes(app) {
 
     const getOwnedGames = async (req, res) => {
         const steamID = req.params.steamID;
-        const appID = req.params.appID || null;
+        const appID = null;
         const moreInfo = true;
 
         try {
             const result = await api.getOwnedGames(steamID, appID, moreInfo);
-            const games = result.data.games;
-
-            for (const game of games.slice(0, 5)) {
+            const games = result.data.games.sort((a, b) => b.playtime - a.playtime).slice(0, 5);
+            
+            for (const game of games) {
                 try {
                     const allAchievements = await api.getAchievements(steamID, game.appID);
                     const unlockedAchievements = Object.entries(allAchievements.data.achievements).filter(achievement => achievement[1].unlocked);

@@ -1,6 +1,6 @@
 import model from "./model.js";
 export const createGame = (game) => {
-    delete game._id
+    model.deleteOne({ gameName: game.gameName});
     const emptyGame = {
         origin: '',
         gameName: '',

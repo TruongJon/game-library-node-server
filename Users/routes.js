@@ -29,6 +29,11 @@ export default function UserRoutes(app) {
     res.json(userCopy);
   };
 
+  const getFollowers = async (req, res) => {
+    const followers = await dao.findFollowers(req.params.username);
+    res.json(followers);
+  };
+
   const searchUsername = async (req, res) => {
     const currentUser = await dao.findUserByUsername(req.params.username);
     const user = await dao.searchUsername(req.params.searchString, [
@@ -124,4 +129,5 @@ export default function UserRoutes(app) {
   app.post("/api/users/signup", signup);
   app.post("/api/users/signin", signin);
   app.post("/api/users/signout", signout);
+  app.get("/api/users/:username/followers", getFollowers);
 }

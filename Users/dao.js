@@ -12,6 +12,11 @@ export const createUser = (user) => {
 }
 export const findAllUsers = () => model.find();
 export const findUserByUsername = (username) =>  model.findOne({ username: username });
+export const findFollowers = (username) =>
+  model
+    .find({ following: { $in: [username] } })
+    .select("username avatar")
+    .exec();
 export const findUserByCredentials = (username, password) =>  model.findOne({ username, password });
 export const updateUser = (username, user) =>  model.updateOne({ username: username }, { $set: user });
 export const deleteUser = (username) => model.deleteOne({ username: username });

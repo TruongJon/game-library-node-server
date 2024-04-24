@@ -16,7 +16,6 @@ export default function RiotRoutes(app) {
             });
         } catch (err) {
             console.error(err);
-            //res.status(400).send('An error occurred while fetching data from the Riot API.');
         }
     };
 
@@ -34,7 +33,6 @@ export default function RiotRoutes(app) {
             });
         } catch (err) {
             console.error(err);
-            //res.status(400).send('An error occurred while fetching data from the Riot API.');
         }
     };
 
@@ -52,7 +50,6 @@ export default function RiotRoutes(app) {
             });
         } catch (err) {
             console.error(err);
-            //res.status(400).send('An error occurred while fetching data from the Riot API.');
         }
     };
 
@@ -76,7 +73,6 @@ export default function RiotRoutes(app) {
             res.json(response);
         } catch (err) {
             console.error(err);
-            //res.status(400).send('An error occurred while fetching data from the Riot API.');
         }
     };
     

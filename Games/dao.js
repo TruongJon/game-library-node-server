@@ -3,17 +3,16 @@ import model from "./model.js";
 export const createGame = async (game) => {
     const emptyGame = {
         origin: '',
-        gameName: '',
+        gamename: '',
         image_url: '',
     };
-    const existingGame = await model.findOne({ gameName: game.gameName });
+    const existingGame = await model.findOne({ gamename: game.gamename });
     if (existingGame) {
-        return model.updateOne({ gameName: game.gameName }, { $set: game });
+        return model.updateOne({ gamename: game.gamename }, { $set: game });
     } else {
         return model.create({...emptyGame, ...game});
     }
 }
 
-
 export const findAllGames = () => model.find();
-export const findGameByGameName = (gameName) =>  model.findOne({ gameName: gameName });
+export const findGameByGameName = (gamename) =>  model.findOne({ gamename: gamename });

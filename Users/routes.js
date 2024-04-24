@@ -28,9 +28,8 @@ export default function UserRoutes(app) {
       const userCopy = JSON.parse(JSON.stringify(user));
       delete userCopy.password;
       res.json(userCopy);
-    }
-    catch(e) {
-      console.log(e)
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -74,12 +73,14 @@ export default function UserRoutes(app) {
   const followUser = async (req, res) => {
     const { username, followingUsername } = req.params;
     const user = await dao.findUserByUsername(username);
-    const status = await dao.updateUser(user.username, {
-      ...user._doc,
-      following: [...user.following, followingUsername],
-    });
-    req.session["currentUser"] = await dao.findUserByUsername(username);
-    res.send(status);
+    if (!user.following.includes(followingUsername)) {
+      const status = await dao.updateUser(user.username, {
+        ...user._doc,
+        following: [...user.following, followingUsername],
+      });
+      req.session["currentUser"] = await dao.findUserByUsername(username);
+      res.send(status);
+    }
   };
 
   const unfollowUser = async (req, res) => {

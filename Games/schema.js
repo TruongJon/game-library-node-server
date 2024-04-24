@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const gameSchema = new mongoose.Schema({
     origin: String,
-    gamename: {type: String, unique: true},
+    gamename: String,
     imageurl: String,
   },
   { collection: "games", versionKey: false  });

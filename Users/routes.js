@@ -52,6 +52,15 @@ export default function UserRoutes(app) {
     res.json(await Promise.all(userList));
   };
 
+  const anonymousSearchUsername = async (req, res) => {
+    const user = await dao.searchUsername(req.params.searchString, []);
+    const userList = await user.map(async (person) => {
+      const avatar = (await dao.findUserByUsername(person.username)).avatar;
+      return { username: person.username, avatar: avatar };
+    });
+    res.json(await Promise.all(userList));
+  };
+
   const findFollowing = async (req, res) => {
     const currentUser = await dao.findUserByUsername(req.params.username);
     const following = currentUser.following;
@@ -127,6 +136,7 @@ export default function UserRoutes(app) {
   app.get("/api/users", findAllUsers);
   app.get("/api/users/:username", findUserByUsername);
   app.get("/api/users/search/:username/:searchString", searchUsername);
+  app.get("/api/users/search/:searchString", anonymousSearchUsername);
   app.get("/api/users/:username/following", findFollowing);
   app.put("/api/users/:username/follow/:followingUsername", followUser);
   app.put("/api/users/:username/unfollow/:followingUsername", unfollowUser);

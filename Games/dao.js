@@ -15,4 +15,4 @@ export const createGame = async (game) => {
 }
 
 export const findAllGames = () => model.find();
-export const findGameByGameName = (gamename) =>  model.findOne({ gamename: gamename });
+export const findGameByGameName = (gameName) =>  model.findOne({ gameName: gameName });

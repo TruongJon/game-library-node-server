@@ -24,9 +24,14 @@ export default function UserRoutes(app) {
 
   const findUserByUsername = async (req, res) => {
     const user = await dao.findUserByUsername(req.params.username);
-    const userCopy = JSON.parse(JSON.stringify(user));
-    delete userCopy.password;
-    res.json(userCopy);
+    try {
+      const userCopy = JSON.parse(JSON.stringify(user));
+      delete userCopy.password;
+      res.json(userCopy);
+    }
+    catch(e) {
+      console.log(e)
+    }
   };
 
   const getFollowers = async (req, res) => {

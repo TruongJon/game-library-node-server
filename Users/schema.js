@@ -8,7 +8,11 @@ const userSchema = new mongoose.Schema({
     riotid: String,
     steamid: String,
     following: [ String ],
-    likes: [ String ]
+    likes: [ String ],
+    role: {
+      type: String,
+      enum: ["USER", "ADMIN"],
+      default: "USER",},
   },
   { collection: "users", versionKey: false  });
 export default userSchema;

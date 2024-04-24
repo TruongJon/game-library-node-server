@@ -7,6 +7,7 @@ export const createUser = (user) => {
       steamid: "",
       following: [],
       likes: [],
+      role: "USER",
     };
     return model.create({...defaultUser, ...user});
 }

@@ -6,9 +6,14 @@ export const createGame = async (game) => {
         gameName: '',
         image_url: '',
     };
-    await model.deleteOne({ gameName: game.gameName });
-    return model.create({...emptyGame, ...game});
+    const existingGame = await model.findOne({ gameName: game.gameName });
+    if (existingGame) {
+        return model.updateOne({ gameName: game.gameName }, { $set: game });
+    } else {
+        return model.create({...emptyGame, ...game});
+    }
 }
+
 
 export const findAllGames = () => model.find();
 export const findGameByGameName = (gameName) =>  model.findOne({ gameName: gameName });

@@ -5,44 +5,30 @@ export default function SteamRoutes(app) {
 
     const getOwnedGames = async (req, res) => {
         const steamID = req.params.steamID;
-        const appID = req.params.appID || null;
+        const appID = null;
         const moreInfo = true;
 
         try {
             const result = await api.getOwnedGames(steamID, appID, moreInfo);
-            res.json(result.data.games);
+            const games = result.data.games.sort((a, b) => b.playtime - a.playtime).slice(0, 5);
+            
+            for (const game of games) {
+                try {
+                    const allAchievements = await api.getAchievements(steamID, game.appID);
+                    const unlockedAchievements = Object.entries(allAchievements.data.achievements).filter(achievement => achievement[1].unlocked);
+                    game.achievements = unlockedAchievements;
+                } catch (err) {
+                    console.error(`An error occurred while fetching achievements for game ${game.appID}: ${err}`);
+                    continue;
+                }
+            }
+
+            res.json(games);
         } catch (err) {
             console.error(err);
-            res.status(400).send('An error occurred while fetching data from the Steam API.');
+            // res.status(400).send('An error occurred while fetching data from the Steam API.');
         }
     };
 
-    const getGameSchema = async (req, res) => {
-        const appID = req.params.appID;
-
-        try {
-            const result = await api.getGameSchema(appID);
-            res.json(result.data);
-        } catch (err) {
-            console.error(err);
-            res.status(400).send('An error occurred while fetching data from the Steam API.');
-        }
-    };
-
-    const getAchievements = async (req, res) => {
-        const steamID = req.params.steamID;
-        const appID = req.params.appID;
-
-        try {
-            const result = await api.getAchievements(steamID, appID);
-            res.json(result.data);
-        } catch (err) {
-            console.error(err);
-            res.status(400).send('An error occurred while fetching data from the Steam API.');
-        }
-    };
-
-    app.get('/api/games/:steamID/:appID?', getOwnedGames);
-    app.get('/api/schema/:appID', getGameSchema);
-    app.get('/api/achievements/:steamID/:appID', getAchievements);
+    app.get('/api/games/:steamID', getOwnedGames);
 }
